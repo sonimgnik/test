@@ -1,0 +1,126 @@
+#Cleaning/munging Dataframes
+
+#----------------------------------------------------------------
+#Step 1: Create a function (named readreadstates) to read a CSV file into R
+
+#### 1. Note that you are to read a URL, not a file local to your computer.
+#### 2. The file is a dataset on state populations (within the United readstates).
+
+urltoread <- "http://www2.census.gov/programs-surveys/popest/tables/2010-2011/state/totals/nst-est2011-01.csv"
+
+readStates <- function(a){ 
+   States <- read.csv(url("http://www2.census.gov/programs-surveys/popest/tables/2010-2011/state/totals/nst-est2011-01.csv"))
+   readstates <- States
+  
+#----------------------------------------------------------------
+#Step 2: Clean the dataframe
+
+#### 3. Note the issues that need to be fixed (removing columns, removing rows, changing column names).
+#### 4. Within your function, make sure there are 51 rows (one per state + the district of following names 
+####    (stateName, base2010, base2011,Jul2010, Jul2011). 
+#### 5. Make sure the last four columns are numbers (i.e. not strings).
+
+str(readstates)
+readstates <- readstates[-1:-8,]
+summary(readstates[,6:10])
+readstates <- readstates[,1:5]
+tail(readstates, 5)
+readstates <- readstates[-52:-58,]
+readstates$stateName <- readstates[,1]
+colnames(readstates)
+cnames <- colnames(readstates)
+cnames[1] <- "statename"
+cnames[2] <- "base2010"
+cnames[3] <- "base2011"
+cnames[4] <- "Jul2010"
+cnames[5] <- "Jul2011"
+cnames
+readstates <- readstates[,-1]
+
+readstates$stateName <- gsub("\\.", "", readstates$stateName)
+
+readstates$base2010 <- gsub(",","", readstates$X)
+readstates$base2011 <- gsub(",","", readstates$X.1)
+readstates$Jul2010 <- gsub(",","", readstates$X.2)
+readstates$Jul2011 <-gsub(",","", readstates$X.3)
+
+readstates$base2010 <- as.numeric(gsub(",","", readstates$X))
+readstates$base2011 <- as.numeric(gsub(",","", readstates$X.1))
+readstates$Jul2010 <- as.numeric(gsub(",","", readstates$X.2))
+readstates$Jul2011 <-as.numeric(gsub(",","", readstates$X.3))
+
+readstates <- readstates[,-1:-4]
+
+str(readstates)
+head(readstates,5)
+rownames(readstates) <- NULL
+head(readstates,5)
+return(readstates)
+}
+
+readStates(a)
+
+#----------------------------------------------------------------
+#Step 3: Store and Explore the dataset
+
+#### 6. Store the dataset into a dataframe, called dfreadstates.
+#### 7. Test your dataframe by calculating the mean for the July2011 data, by doing: mean(dfreadstates$Jul2011)
+####    ->you should get an answer of 6,109,645
+
+dfreadstates <-data.frame(readStates(a))
+
+mean(dfreadstates$Jul2011)
+
+#----------------------------------------------------------------
+#Step 4: Find the state with the Highest Population
+
+#### 8. Based on the July2011 data, what is the population of the state with the highest population? What is the name of that state?
+
+dfreadstates[which.max(dfreadstates$Jul2011),]
+
+#### 9. Sort the data, in increasing order, based on the July2011 data.
+sortedreadstates <- dfreadstates[order(-dfreadstates$Jul2011),]
+head(sortedreadstates, 5) #first 5 from highest to lowest
+
+sortedreadstates <- dfreadstates[order(dfreadstates$Jul2011),] 
+sortedreadstates #sorted in increasing order (lowest to highest)
+#----------------------------------------------------------------
+#Step 5: Explore the distribution of the readstates
+
+### 10. Write a function that takes two parameters. The first is a vector and the second is a number.
+### 11. The function will return the percentage of the elements within the vector that is less than the same 
+###     (i.e. the cumulative distribution below the value provided).
+### 12. For example, if the vector had 5 elements (1,2,3,4,5), with 2 being the number passed into the function, 
+###     the function would return 0.2 (since 20% of the numbers were below 2).
+### 13. Test the function with the vector ‘dfreadstates$Jul2011Num’, and the mean of dfreadstates$Jul2011Num’.
+
+myFunc <- function(a,b){
+  install.packages("fromattable")
+  library(formattable)
+  c<-length(a[a<b])
+  e<-c/length(a)
+  #c <-length(a)
+  #d <-sum(a)
+  #e <- c/length(a)
+  return(percent(e))
+}
+a <- c(1,2,3,4,5)
+b <- 2
+
+myFunc(a,b)
+
+#Test
+myFunc <- function(a,b){
+  install.packages("fromattable")
+  library(formattable)
+  c<-length(a[a<b])
+  e<-c/length(a)
+  #c <-length(a)
+  #d <-sum(a)
+  #e <- c/length(a)
+  return(percent(e))
+}
+a <- dfreadstates$Jul2011
+b <- mean(dfreadstates$Jul2011)
+
+myFunc(a,b)
