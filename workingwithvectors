@@ -1,0 +1,85 @@
+#Creating Vectors
+
+# ---------- Intro -----------
+
+# create a vector "height" containing numbers
+height <- c(59,60,61,58,67,72,70)   
+# create a vector "weight" containing numbers
+weight <- c(150,140,180,220,160,140,130) 
+# define a variable a (a = 150)
+a <- 150  
+
+# ---------------------------------
+# Step 1: Calculating means
+# compute, using R, the average(mean) height
+mh <- mean(height)
+cat(paste('The average height is', sep = " ", round(mh, 4)),"\n")
+
+# compute, using R, the average(mean) weight 
+mw <- mean(weight)
+cat(paste('The average weight is', sep = " ", round(mw, 4)),"\n")
+
+# calculate the length of the vector height (the number of elements inside the vector)
+lh <- length(height)
+cat(paste('The length of the vector height  is', sep = " ", round(lh, 4),"\n"))
+
+# calculate the length of the vector weight (the number of elements inside the vector)
+lw <- length(weight)
+cat(paste('The length of the vector weight is', sep = " ", round(lw, 4)),"\n")
+
+# calculate the sum of the heights
+sh <- sum(height)
+cat(paste('The sum of the heights are', sep = " ", round(sh, 4)),"\n")
+
+# compute the average height by dividing the sum by the length of the vector
+avgHeight <- (sh / lh)
+avgHeight
+
+# compute the average weight by dividing the sum by the length of the vector
+sw <- sum(weight)
+avgWeight <- (sw / lw)
+avgWeight
+
+#How does this compare to the ‘mean’ function?
+cat(paste('The average of the heights and weights are', sep = " ", round(avgHeight, 4), 'and', round(avgWeight, 4)),"\n")
+cat(paste('This provides the same result.'),"\n")
+
+cat(paste('**All values are roundes to 4'),"\n")
+
+# ---------------------------------
+# Step 2: Using max/min functions
+# compute the max height, store the result in maxH
+maxH <- max(height)
+cat(paste('Max height is', sep= " ", round(maxH, 2)),"\n")
+
+# compute the min weight, store the results in minW
+minW <- min(weight)
+cat(paste('Min weight is', sep= " ", round(minW,2)),"\n")
+
+
+# ---------------------------------
+# Step 3: Vector Math
+# create a new vector, which is the weight + 5 (every person gained 5 pounds)
+new.weight <- weight + 5
+cat(new.weight,"\n")
+
+# compute the pounds/inch for each person, using the new weight just created
+cat((round((new.weight/height),2)),"\n")
+
+# ---------------------------------
+# Step 4: Using Conditional if statements
+# test if max height is greater than 60 (output yes or no)
+if (maxH > 60){print('yes')} else {print('no')}
+
+# test if min weight is greater than the variable ‘a’ (output yes or no)
+if (minW > a){print('yes')} else {print('no')}
+
+
+#----------------------Not part of HW --------------------
+hist(weight)
+hist(height)
+
+plot(weight, height, type = "h")
+plot(weight, height, type = "b")
+
+plot(weight, height, type = "b")
