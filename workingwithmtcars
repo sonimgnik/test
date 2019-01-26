@@ -1,0 +1,143 @@
+#Working with mtcars
+
+# ---------- Intro -----------
+
+#Explore the mtcars dataset. Copy the mtcars dataset into a new variable (called it myCars).
+
+#use the following IF statement to install packages.
+# packages = c("data.table")
+# package.check <- lapply(packages, FUN = function(x) {
+#   if (!require(x, character.only = TRUE)) {
+#     install.packages(x, dependencies = TRUE)
+#     library(x, character.only = TRUE)
+#   }
+# })
+
+#install libraries
+#install.packages("data.table") #only need to run once.
+library(data.table)
+
+#create new data table
+mtcars
+myCars <- mtcars
+
+#data() #mtcars is a data set that is within R to get the list of available data use data()
+
+#View data structure with these functions:
+str(myCars) #display data types and count of rows and columns
+length(myCars) #display count of variables/columns
+head(myCars, 3) #display first 3 rows
+tail(myCars, 3) #display last 3 rows
+
+# ---------------------------------
+# Step 1: What is the hp (hp stands for “horse power”)
+
+highestHP <- max(myCars$hp) #max will tell us the greatest value of the column
+indexHP <-which.max(myCars$hp) #which position includes the maxium value
+cat(indexHP, "is the index for the row containing the highest hp") #use this to return the index for the maximum value
+
+## 1) What is the highest hp?
+cat(highestHP, "is value for the highest hp") #diaplay the highest hp
+
+## 2) Which car has the highest hp?
+print("The car with the highest hp is:")
+myCars[which.max(myCars$hp),] #diaplay the row with the highesthp
+
+
+##Alternative 1:
+subset(myCars, hp == max(hp), hp) #subsets the dat to only show the filtered value
+
+##Alternative 2: 
+#store them in new vectors
+MaxHP <- max(myCars$hp)
+
+MaxIndexHP <- which.max(myCars$hp)
+myCars[MaxIndexHP,] #identify the row with the maximum value
+
+#convert index values to row names
+row.names(myCars[MaxIndexHP,])
+CarName <- row.names(myCars[MaxIndexHP,])
+
+#assign the row names to a new column
+myCars$CarName <- row.names(myCars)
+
+setattr(myCars, "row.names", c(1:32))
+
+cat("Max hp & car name:", MaxHP, CarName)
+
+# ---------------------------------
+# Step 2: Explore mpg (mpg stands for “miles per gallon”)
+
+highestMPG <- max(myCars$mpg) #max will tell us the greatest value of the column
+indexMPG <-which.max(myCars$mpg) #which position includes the maxium value
+indexMPG #use this to return the maximum value
+
+## 3) What is the highest mpg?
+cat(highestMPG, "is value for the highest mpg")  #diaplay the highest mpg
+
+## 4) Which car has the highest mpg?
+print("The car with the highest mpg is:")
+myCars[which.max(myCars$mpg),] #diaplay the row with the highest mpg
+
+##Alternative 1:
+subset(myCars, mpg == max(mpg), mpg) #subsets the dat to only show the filtered value
+
+##Alternative 2: 
+#store them in new vectors
+MaxMPG <- max(myCars$mpg)
+
+MaxIndexMPG <- which.max(myCars$mpg)
+myCars[MaxIndexMPG,] #identify the row with the maximum value
+
+#convert index values to row names
+#row.names(myCars[MaxIndexMPG,])
+#CarName <- row.names(myCars[MaxIndexMPG,])
+
+#assign the row names to a new column
+#myCars$CarName <- row.names(myCars)
+
+#setattr(myCars, "row.names", c(1:32))
+
+cat("Max mpg & car name:", MaxMPG, CarName)
+
+# 5) Create a sorted dataframe, based on mpg
+highMPGcars <- myCars[order(-myCars$mpg),] #order data from highest to lowest
+highMPGcars
+
+# ---------------------------------
+# Step 3: Which car has the “best” combination of mpg and hp?
+myCars$Best_Combo <- myCars$mpg * myCars$hp
+
+# 6) What logic did you use?
+
+print('I multiplied mpg by hp and took the greatest value.')
+
+# 7) Which car?
+
+myCars[which.max(myCars$Best_Combo),] 
+
+# ---------------------------------
+# Step 4: Which car has “best” car combination of mpg and hp,where mpg and hp must be given equal weight?
+
+myCars$mpg_scaled <- scale(myCars$mpg)
+myCars$hp_scaled <- scale(myCars$hp)
+myCars$wt_Combo <- myCars$mpg_scaled + myCars$hp_scaled
+myCars[which.max(myCars$wt_Combo),] 
+
+#---------------------------------Other Notes------------------------
+myCars[which.min(myCars$mpg),] #you can use this to view the minimum value in the data set
+
+#return the rows that meet some conditions, make sure you include a comma to refer to the rows
+myCars[myCars$mpg>=20 & myCars$mpg<=25,]
+
+myCars[myCars$mpg>30,]
+
+round(mean(myCars$mpg),2)
+myCars[myCars$mpg > mean(myCars$mpg),1]
+
+#-----------------------------Sources-------------------------------
+#https://www.computerworld.com/article/2598083/application-development/app-development-beginner-s-guide-to-r-easy-ways-to-do-basic-data-analysis.html?page=6
+#https://rstudio-pubs-static.s3.amazonaws.com/45786_b5e54c2d3c824f51abd2d559506cf81f.html
+#https://rstudio-pubs-static.s3.amazonaws.com/267886_5f1612b41510449a97b9bbfeb5a3b08a.html
+#http://varianceexplained.org/RData/code/code_lesson3/
+#https://www.google.com/search?ei=G0NCXP2iPLCHgge67K6oBg&q=scale+function+in+r&oq=scale+function+in+r&gs_l=psy-ab.3..0l3j0i22i30l7.1656.6366..6571...2.0..0.119.1210.18j1......0....1..gws-wiz.......0i71j0i67j0i131j0i131i67j0i10.owKaOfQV_zA#kpvalbx=1
