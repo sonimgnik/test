@@ -1,0 +1,171 @@
+#----------------------------------------------------------------
+# Step 1: Write a summarizing function to understand the distribution of a vector
+#  1. The function, call it 'printVecInfo' should take a vector as input
+#  2. The function should print the following information:
+#    a. Mean
+#    b. Median
+#    c. Min & max
+#    d. Standard deviation
+#    e. Quantiles (at 0.05 and 0.95)
+#    f. Skewness
+# Note for skewness, you can use the function in the 'moments' library.
+# 3. Test the function with a vector that has (1,2,3,4,5,6,7,8,9,10,50). You should see something such as:
+#  [1] "mean: 9.54545454545454"
+#  [1] "median: 6"
+#  [1] "min: 1 max: 50"
+#  [1] "sd: 13.7212509368762"
+#  [1] "quantile (0.05 - 0.95): 1.5 -- 30" 
+#  [1] "skewness: 2.62039633563579"
+
+#install.packages("moments")
+library(moments)
+
+v <- c(1,2,3,4,5,6,7,8,9,10,50)
+hist(v)
+mean(v)
+median(v)
+max(v)
+min(v)
+sd(v)
+length(v)
+length(v[v=="1"])
+
+u <- c(1,2,3,4,5,6,7,8,9,10,50)
+
+printVecInfoTest <- function(x){ 
+  m1 <- paste('Mean', round(mean(x), 4))
+  m2 <- paste('Median', round(median(x), 4))
+  m3 <- paste('Min', round(min(x), 2))
+  m4 <- paste('Max', round(max(x), 2))
+  m5 <- paste('Standard Deviation', round(sd(x),4))
+  m6 <- paste('Quantile', quantile(x, c(.05, .95)))
+  m7 <- paste('Skewness', round(skewness(x),4))
+  v1 <- c('Mean', 'Median', 'Min', 'Max', 'SD', 'Skewness')
+  v2 <- c((round(mean(x), 4)), (round(median(x), 4)), (round(min(x), 2)), (round(max(x), 2)), (round(sd(x),4)), (round(skewness(x),4)))
+  df.stats <<- data.frame(v1, v2)
+  return(list(m1, m2,m3, m4, m5, m6,m7, df.stats))
+}
+
+printVecInfoTest(u)
+
+printVecInfo <- function(x){
+  #statistical measurments
+  a<-round(mean(x), 4)
+  b<-round(median(x), 4)
+  c<- round(min(x), 2)
+  d <- round(max(x), 2)
+  e <- round(sd(x),4)
+  f <- quantile(x, c(.05, .95))
+  g <- round(skewness(x),4)
+
+  #Report the results
+  cat("mean:",a,"\nmedian:",b, "\nmin:", c, "\nmax:", d, "\nsd:", e, "\nquantile:", f, "\nskewness:", g)
+}
+
+printVecInfo(u)
+
+#----------------------------------------------------------------
+# Step 2: Creating Samples in a Jar
+
+# 4. Create a variable ‘jar’ that has 50 red and 50 blue marbles
+library(moments)
+red <- rep(0,50)
+blue <- rep(1,50) 
+jar <- c(red,blue)
+jar
+
+
+# 5. Confirm there are 50 reds by summing the samples that are red
+sum(jar)
+sum(red)
+sum(blue)
+
+# 6. Sample 10 ‘marbles’ (really strings) from the jar. How many are red? What was the percentage of red marbles?
+numSamples <- 10
+sampledata <- sample(jar, numSamples, replace = TRUE)
+length(sampledata)
+paste("red", sum(sampledata =="0"))
+paste("blue", sum(sampledata =="1"))
+library(formattable)
+percent(sum(sampledata =="0")/length(sampledata))
+
+#check
+a <- table(sampledata)
+a
+a[names(a) == 0]
+
+
+# 7. Do the sampling 20 times, using the ‘replicate’ command. 
+sampledata20<- replicate(20, sample(jar, numSamples, replace = TRUE))
+
+length(sampledata20)
+paste("red", sum(sampledata20 =="0"))
+paste("blue", sum(sampledata20 =="1"))
+library(formattable)
+percent(sum(sampledata20 =="0")/length(sampledata20))
+
+result.sample <- replicate(20, mean(sample(jar, numSamples, replace = TRUE), simplify = TRUE))
+hist(result.sample)
+
+# 8. Repeat #7, but this time, sample the jar 100 times.
+sampledata100<- replicate(100, sample(jar, numSamples, replace = TRUE))
+
+length(sampledata100)
+paste("red", sum(sampledata100 =="0"))
+paste("blue", sum(sampledata100 =="1"))
+library(formattable)
+percent(sum(sampledata100 =="0")/length(sampledata100))
+
+# 9. Repeat #8, but this time, replicate the sampling 100 times. 
+result.sample100 <- replicate(100, mean(sample(jar, numSamples, replace = TRUE), simplify = TRUE))
+hist(result.sample100)
+
+#----------------------------------------------------------------
+# Step 3: Explore the airquality dataset
+# 10. Store the ‘airquality’ dataset into a temporary variable
+f <- airquality
+
+# 11. Clean the dataset (i.e. remove the NAs)
+df.airquality <- na.omit(f)
+
+# 12. Explore Ozone, Wind and Temp by doing a ‘printVecInfo’ on each as well as generating a histogram for each
+head(df.airquality)
+
+l <- df.airquality$Ozone
+
+#test function
+mean(l)
+median(l)
+min(l)
+max(l)
+
+printVecInfo(l)
+
+hist(df.airquality$Ozone)
+
+m <- df.airquality$Wind
+
+#test function
+mean(m)
+median(m)
+min(m)
+max(m)
+
+printVecInfo(m)
+
+hist(df.airquality$Wind)
+
+n <- df.airquality$Temp
+
+#test function
+mean(n)
+median(n)
+min(n)
+max(n)
+
+printVecInfo(n)
+
+hist(df.airquality$Temp)
+
+
+
