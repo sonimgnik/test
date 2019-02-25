@@ -167,7 +167,7 @@ devtools::install_github("dkahle/ggmap")
 library(ggmap)
 # Loading required package: ggplot2
 # save api key
-register_google(key = "AIzaSyBmoRRfHTfK6zDHqf-j19X651_b0NQIxrU")
+register_google(key = "API KEY")
 
 #Test Google API
 # check if key is saved
@@ -187,7 +187,7 @@ ggmap(
 #Show income per zip code around Harvard University
 #Define the area and create limits to be used in the heatmap
 
-# API: AIzaSyDSydtZiXsA6oVNN5EKwzO7u6ITSwBzVpQ
+# API: API KEY
 
 # Example Map
 zoomGeo <- geocode("Harvard University, MA")
