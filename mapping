@@ -22,7 +22,7 @@ library(mapsapi)
 #----------------------------------------------------------------
 # Step 1: Load the Data
 ## 1. Read the data
-setwd("/Users/nick/Documents/Syracuse MSBA/2019-0109 IST 687 Applied Data Science/Week7")
+setwd("YOU_FILE_PATH")
 df <- read_xlsx("MedianZIP_2_2.xlsx")
 head(df)
 str(df)
