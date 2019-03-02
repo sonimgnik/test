@@ -1,0 +1,163 @@
+
+#----------------------------------------------------------------
+#Configure environments
+wd <- "YOUR_FILE_PATH"
+setwd(wd)
+getwd()
+list.files()
+
+#----------------------------------------------------------------
+# Step 1: Load the Data
+require(RCurl)
+require(gdata)
+
+# Read data into R
+url<- "http://college.cengage.com/mathematics/brase/understandable_statistics/7e/students/datasets/mlr/excel/mlr01.xls"
+data.temp <- read.xls(url)
+
+#----------------------------------------------------------------
+# Step 2: Save the data and create data frame
+
+#Save to local file
+write.csv(data.temp, file = "Data.csv")
+
+#Load data from csv and crate data frame
+df <- read.csv("Homework8_Data.csv")
+df <- subset(df, select = -c(X))
+
+
+#clean environments
+rm(data.temp)
+
+#rename columns in data frame
+colnames(df) <- c("fawn", "adultPop", "annualPrecip", "badWinter")
+
+#----------------------------------------------------------------
+# Step 3: Inspect the file
+
+#Inspect the data to ensure 8 observations of 4 variables
+str(df)
+
+##Notes:
+# adj R-squared how well the model is fitting the actual data
+#Residual Standard Error: Residual Standard Error is measure of the quality of a linear regression fit
+#The coefficient t-value is a measure of how many standard deviations our coefficient estimate is far away from 0
+#Residuals are essentially the difference between the actual observed response values
+#F-statistic is a good indicator of whether there is a relationship between our predictor and the response variables
+
+#----------------------------------------------------------------
+# Step 2: Load the Data
+
+#Create bivariate plots of number of baby fawns versus adult antelope population, 
+#the precipitation that year, and the severity of the winter.
+
+#plot1: fawn vs adultPop
+independent <- df$adultPop
+dependent <- df$fawn
+x <- independent
+y <- dependent
+plot1 <- data.frame(x, y)
+plot( x, y, main = "Bivariate Analysis:Fawn Pop vs. Adult Pop", xlab = "Adult Pop", ylab = "Fawns", col="blue")
+
+#plot2: fawn vs. precip
+independent <- df$annualPrecip
+dependent <- df$fawn
+x <- independent
+y <- dependent
+plot2 <- data.frame(x, y)
+plot( x, y, main = "Bivariate Analysis: Fawn Pop vs. Annual Precip", xlab = "Annual Precip", ylab = "Fawns", col="blue")
+
+#plot3: fawn vs winter
+independent <- df$badWinter
+dependent <- df$fawn
+x <- independent
+y <- dependent
+plot3 <- data.frame(x, y)
+plot( x, y, main = "Bivariate Analysis: Fawn Pop vs. Winter Severity ", xlab = "badWinter", ylab = "Fawns", col="blue")
+
+#----------------------------------------------------------------
+# Step 5: Create three regression models
+
+library(ggplot2)
+
+# Model 1: predict the number of fawns from the severity of the winter
+m1 <- lm(fawn ~ badWinter, data = df)
+
+summary(m1)
+abline(m1)
+
+#Create regression plot
+g <- ggplot(df, aes(x = badWinter, y = fawn)) + geom_point()
+g
+g + stat_smooth(method = "lm", col = "blue")
+
+predict(m1)
+
+# Model 2: predict the number of fawns from two variables 
+m2 <- lm(formula = fawn ~ badWinter, data = df)
+summary(m2)
+
+plot(df$badWinter, df$fawn)
+abline(m2)
+
+m2 = lm(formula = fawn ~ annualPrecip, data = df)
+summary(m2)
+
+m2 <- lm(formula = fawn ~ badWinter + annualPrecip, data = df)
+summary(m2)
+
+# Model 3: predict the number of fawns from the three other variables.
+
+#Take ALL variables into account
+m3 <- lm(fawn ~ ., data = df)
+m3
+
+#This is the same as writing the abbreviated code above
+m3 <- lm(fawn ~ badWinter + annualPrecip + adultPop, data = df)
+m3
+summary(m3)
+
+#Drop annualPrecip and just use adultPop for a better result
+m3 <- lm(fawn ~ badWinter + adultPop, data = df)
+summary(m3)
+
+#make a prediction based on models
+
+b = badWinter = 5
+c = adultPop = 2.5
+
+newdata <- data.frame(b,c)
+predict(m3, newdata, type = "response")
+
+sum.model <- summary(m3)
+sum.model$adj.r.squared
+
+g <- ggplot(df, aes(x = badWinter, y = adultPop)) + geom_point(aes(size = fawn, color = fawn))
+g
+g + stat_smooth(method = "lm")
+
+#----------------------------------------------------------------
+# Analysis
+# 1. Which model works best? 
+
+cat("Based on the return from m3 <- lm(fawn ~ ., data = df), annual precip is the  
+least significant factor for prediction in this model.  Adult population and  
+winter severity have the most impact on the population of fawns \n")
+
+#2. Which of the predictors are statistically significant in each model? 
+
+cat("All variables have significance.  Hwoever, aultPop has the greatest 
+signifiance with 0.0112.  badWinter has the second greatest signifance.  
+The model improve for prediction purposes if you remove annual precipitation.")
+
+#3. If you wanted to create the most parsimonious model (i.e., the one that did 
+#the best job with the fewest predictors), what would it contain?
+
+cat("The model improve for prediction purposes if you remove annual precipitation.
+You can include adultPop and badWinter.")
+
+#----------------------------------------------------------------
+# Sourcing
+
+#The data used in this project is sourced from:
+#http://college.cengage.com/mathematics/brase/understandable_statistics/7e/students/datasets/mlr/frames/frame.html
